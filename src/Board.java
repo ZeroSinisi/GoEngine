@@ -38,8 +38,6 @@ public class Board {
 	}
 
 	public void checkRemoval() {
-		// TODO Check the board for chains with no liberties. Remove them, and
-		// update captured values for players
 		boolean checked[][] = new boolean[9][9];
 		for (int i = 0; i < 9; i++) {
 			for (int j = 0; j < 9; j++) {
@@ -102,6 +100,11 @@ public class Board {
 
 	public void calculateScores(Player pB, Player pW) {
 		// TODO Calculate territory, and add to captured pieces to update scores
+	}
+
+	public void calculateHeuristic(Player pB, Player pW) {
+		// TODO Calculate the relative score (Positive: black winning; Negative:
+		// white winning)
 	}
 
 	public Intersection.Piece getContents(int r, int c) {

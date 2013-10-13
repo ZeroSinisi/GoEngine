@@ -5,11 +5,11 @@ import java.util.Scanner;
 
 public class GoEngine {
 	public DisplayArea display;
-	private Board board;
+	public Board board;
 	private Player playerBlack;
 	private Player playerWhite;
 
-	Scanner in = new Scanner(System.in);
+	public Scanner in = new Scanner(System.in);
 
 	public static void main(String[] args) {
 		GoEngine engine = new GoEngine();
@@ -40,39 +40,10 @@ public class GoEngine {
 	public void playGo() {
 		while (true) { // TODO This will need termination eventually, but
 						// players can't pass yet
-			playerMove(playerBlack);
-			display.setBoard(board);
-			display.paintComponent(display.getGraphics());
-			playerMove(playerWhite);
-			display.setBoard(board);
-			display.paintComponent(display.getGraphics());
+			playerBlack.promptMove(this);
+			display.repaint();
+			playerWhite.promptMove(this);
+			display.repaint();
 		}
 	}
-
-	// Prompt a player to make a move
-	// TODO Possibly implement some better input, rather than console
-	// TODO Implement in Player rather than here, so it can be overridden to
-	// allow for AI
-	public void playerMove(Player p) {
-		boolean valid = false;
-		while (valid == false) {
-			int row;
-			int col;
-			System.out.println(p.name + ", select a space");
-			System.out.print("Row: ");
-			row = in.nextInt();
-			System.out.print("Column: ");
-			col = in.nextInt();
-
-			if (row >= 0 && row < 9 && col >= 0 && col < 9) {
-				valid = board.placePiece(row, col, p.piece);
-			} else
-				valid = false;
-
-			if (valid == false) {
-				System.out.println("Move is invalid, try again.");
-			}
-		}
-	}
-
 }
