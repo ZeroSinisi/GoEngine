@@ -8,6 +8,7 @@ public class GoEngine {
 	public Board board;
 	private Player playerBlack;
 	private Player playerWhite;
+	public static int turnCount;
 
 	public Scanner in = new Scanner(System.in);
 
@@ -15,11 +16,12 @@ public class GoEngine {
 		GoEngine engine = new GoEngine();
 		engine.createWindow();
 		engine.playGo();
+		turnCount = 1;
 	}
 
 	public GoEngine() {
 		playerBlack = new Player("Black", Intersection.Piece.BLACK);
-		playerWhite = new Player("White", Intersection.Piece.WHITE);
+		playerWhite = new ComputerPlayer("White", Intersection.Piece.WHITE);
 		board = new Board();
 		display = new DisplayArea();
 		display.setBoard(board);
@@ -41,8 +43,10 @@ public class GoEngine {
 		while (true) { // TODO This will need termination eventually, but
 						// players can't pass yet
 			playerBlack.promptMove(this);
+			turnCount++;
 			display.repaint();
 			playerWhite.promptMove(this);
+			turnCount++;
 			display.repaint();
 		}
 	}
