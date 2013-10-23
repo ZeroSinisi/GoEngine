@@ -29,7 +29,7 @@ public class ComputerPlayer extends Player {
 							break;
 						}
 					}
-					for(int j = row - 1; j >= 0; j++){
+					for(int j = row - 1; j >= 0; j--){
 						if(g.board.getContents(j, col) == Intersection.Piece.EMPTY) {
 							topSpace++;
 						} else {
@@ -43,7 +43,7 @@ public class ComputerPlayer extends Player {
 							break;
 						}
 					}
-					for(int j = col - 1; j >= 0; j++){
+					for(int j = col - 1; j >= 0; j--){
 						if(g.board.getContents(j, col) == Intersection.Piece.EMPTY) {
 							leftSpace++;
 						} else {
