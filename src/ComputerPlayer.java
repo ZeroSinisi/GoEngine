@@ -1,7 +1,3 @@
-import java.util.ArrayList;
-
-
-
 public class ComputerPlayer extends Player {
 
 	public ComputerPlayer(String n, Intersection.Piece p) {

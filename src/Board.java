@@ -94,26 +94,6 @@ public class Board {
 			}
 		}
 	}
-
-	/*public void checkRemoval(int r, int c) {
-		boolean checked[][] = new boolean[9][9];
-		for (int i = -1; i < 2; i++) {
-			for (int j = -1; j < 2; j++) {
-				if (r + i >= 0 && r + i < 9 && c + j >= 0 && c + j < 9) {
-					if (checked[r + i][c + j] == false
-							&& board[r + i][c + j].getContents() != Intersection.Piece.EMPTY) {
-						List<Coord> group = new ArrayList<Coord>();
-						if (checkGroup(r + i, c + j,
-								board[r + i][c + j].getContents(), checked,
-								group, 0) == 0) {
-							removeGroup(group);
-						}
-					}
-				}
-
-			}
-		}
-	}*/
 	
 	public void checkRemoval(int r, int c) {
 		boolean checked[][] = new boolean[9][9];
@@ -175,12 +155,46 @@ public class Board {
 	}
 
 	public void calculateScores(Player pB, Player pW) {
-		// TODO Calculate territory, and add to captured pieces to update scores
+		boolean checked[][] = new boolean[9][9];
+		for(int i=0; i<9; i++){
+			for (int j=0; j<9; j++){
+				if(checked[i][j]==false){
+					List<Intersection.Piece> colors = new ArrayList<Intersection.Piece>();
+					int score = scoreFill(i, j, colors, checked, 0);
+					Intersection.Piece scoreColor = colors.get(0);
+					for(int k=0; k<colors.size();k++){
+						if(colors.get(k)!=scoreColor){
+							scoreColor = Intersection.Piece.EMPTY;
+							break;
+						}
+					}
+					if(scoreColor==Intersection.Piece.BLACK){
+						pB.score += score;
+					}
+					else if(scoreColor==Intersection.Piece.WHITE){
+						pW.score += score;
+					}
+				}
+			}
+		}
 	}
-
-	public void calculateHeuristic(Player pB, Player pW) {
-		// TODO Calculate the relative score (Positive: black winning; Negative:
-		// white winning)
+	
+	public int scoreFill(int r, int c, List<Intersection.Piece> colors, boolean checked[][], int score){
+		if(checked[r][c]==true){
+			return 0;
+		}
+		else if(board[r][c].getContents()!=Intersection.Piece.EMPTY){
+			colors.add(board[r][c].getContents());
+			return 0;
+		}
+		else{
+			score+= scoreFill(r-1, c, colors, checked, score);
+			score+= scoreFill(r, c+1, colors, checked, score);
+			score+= scoreFill(r+1, c, colors, checked, score);
+			score+= scoreFill(r, c-1, colors, checked, score);
+			return score+1;
+			
+		}
 	}
 
 	public Intersection.Piece getContents(int r, int c) {
