@@ -4,12 +4,20 @@ public class Board {
 	boolean pass;
 	boolean gameOver;
 	
+	private List<Intersection[][]> history;
+	//private Intersection koBoard[][];
+	//private Intersection previousBoard[][];
 	private Intersection board[][];
 	public Intersection.Piece territory[][];
 
 	public Board() {
 		board = new Intersection[9][9];
 		territory = new Intersection.Piece[9][9];
+		//koBoard = new Intersection[9][9];
+		//previousBoard = new Intersection[9][9];
+		
+		history = new ArrayList<Intersection[][]>();
+		
 		for (int i = 0; i < 9; i++) {
 			for (int j = 0; j < 9; j++) {
 
@@ -24,16 +32,36 @@ public class Board {
 	private void setSpace(int r, int c, Intersection.Piece p) {
 		board[r][c].setContents(p);
 	}
-
+	
+	private void storeBoard(Intersection[][] b, List<Intersection[][]> hist){
+		Intersection tempBoard[][] = new Intersection[9][9];
+		copyBoard(b,tempBoard);
+		hist.add(tempBoard);
+	}
+	
 	// Attempt to place a piece. Return false if space is occupied
 	public boolean placePiece(int r, int c, Intersection.Piece p) {
 		if (checkValid(r, c, p) == true) {
 			setSpace(r, c, p);
 			checkRemoval(r, c);
 			pass=false;
+			storeBoard(board,history);
+			//copyBoard(previousBoard,koBoard);
+			//copyBoard(previousBoard);
 			return true;
 		} else
 			return false;
+	}
+	
+	public boolean equalBoards(Intersection[][]a,Intersection[][]b){
+		for(int i=0;i<9;i++){
+			for(int j=0;j<9;j++){
+				if(a[i][j].getContents()!=b[i][j].getContents())
+					return false;
+				
+			}
+		}
+		return true;
 	}
 	
 	public void passTurn(){
@@ -63,6 +91,11 @@ public class Board {
 					0, tempBoard) != 0) {
 				valid = true;
 			}
+			for(int i=0;i<history.size();i++){
+				if(equalBoards(tempBoard,history.get(i))){
+					return false;
+				}
+			}
 		}
 		return valid;
 	}
@@ -72,6 +105,15 @@ public class Board {
 			for(int j=0;j<9;j++){
 				b[i][j]=new Intersection();
 				b[i][j].setContents(board[i][j].getContents());
+			}
+		}
+	}
+	
+	private void copyBoard(Intersection[][] a, Intersection[][] b){
+		for(int i=0;i<9;i++){
+			for(int j=0;j<9;j++){
+				b[i][j]=new Intersection();
+				b[i][j].setContents(a[i][j].getContents());
 			}
 		}
 	}

@@ -45,7 +45,9 @@ public class GoEngine {
 		int whiteWins=0;
 		int blackWins=0;
 		int numGames=0;
-		for(int i=0;i<100;i++){
+		int numTrials=100;
+		for(int i=0;i<numTrials;i++){
+			newGame();
 			while (board.gameOver==false) { // TODO This will need termination eventually, but
 							// players can't pass yet
 				//System.out.println("b");
@@ -57,18 +59,20 @@ public class GoEngine {
 				turnCount++;
 				display.repaint();
 			}
+			//display.repaint();
 			board.calculateScores(playerBlack, playerWhite);
-			System.out.println("B:"+playerBlack.score+" W:"+playerWhite.score);
+			//System.out.println("B:"+playerBlack.score+" W:"+playerWhite.score);
 			if(playerBlack.score>playerWhite.score){
 				blackWins++;
+				System.out.println("B ("+(int)((double)numGames/numTrials*100)+"%)");
 			}else if(playerWhite.score>playerBlack.score){
 				whiteWins++;
+				System.out.println("W ("+(int)((double)numGames/numTrials*100)+"%)");
 			}
 			numGames++;
-			newGame();
 		}
-		System.out.println("Black:" + blackWins/numGames*100+"% ("+blackWins+"/"+numGames+")");
-		System.out.println("White:" + whiteWins/numGames*100+"% ("+whiteWins+"/"+numGames+")");
+		System.out.println("Black:" + (int)((double)blackWins/numGames*100)+"% ("+blackWins+"/"+numGames+")");
+		System.out.println("White:" + (int)((double)whiteWins/numGames*100)+"% ("+whiteWins+"/"+numGames+")");
 	}
 	
 	public void newGame(){
