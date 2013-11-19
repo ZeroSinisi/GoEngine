@@ -9,19 +9,22 @@ public class RandomAI extends Player {
 	}
 	
 	public void promptMove(GoEngine g) {
-		List<Board.Coord> moves = new ArrayList<Board.Coord>();
+		List<Coord> moves = new ArrayList<Coord>();
+		g.board.calculateTerritory();
 		for(int i=0;i<9;i++){
 			for(int j=0;j<9;j++){
-				if(g.board.checkValid(i,j,piece)){
-					moves.add(g.board.new Coord(i,j));
+				if(g.board.checkValid(i,j,piece)&&g.board.getTerritory(i, j)!=piece){
+					moves.add(new Coord(i,j));
 				}
 			}
 		}
 		if(moves.size()!=0){
-			Board.Coord move = moves.get(rand.nextInt(moves.size()));
+			Coord move = moves.get(rand.nextInt(moves.size()));
 			if(g.board.placePiece(move.row, move.col, piece)==false){
 				
 			}
+		}else{
+			g.board.passTurn();
 		}
 	}
 }

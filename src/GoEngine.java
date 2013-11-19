@@ -20,8 +20,10 @@ public class GoEngine {
 	}
 
 	public GoEngine() {
+		//playerBlack = new TerritoryDenialAI("Black", Intersection.Piece.BLACK);
 		playerBlack = new RandomAI("Black", Intersection.Piece.BLACK);
 		playerWhite = new TerritoryDenialAI("White", Intersection.Piece.WHITE);
+		//playerWhite = new RandomAI("White", Intersection.Piece.WHITE);
 		board = new Board();
 		display = new DisplayArea();
 		display.setBoard(board);
@@ -40,20 +42,38 @@ public class GoEngine {
 
 	// Main game loop
 	public void playGo() {
-		while (true) { // TODO This will need termination eventually, but
-						// players can't pass yet
-			//System.out.println("b");
-			playerBlack.promptMove(this);
-			turnCount++;
-			display.repaint();
+		int whiteWins=0;
+		int blackWins=0;
+		int numGames=0;
+		for(int i=0;i<100;i++){
+			while (board.gameOver==false) { // TODO This will need termination eventually, but
+							// players can't pass yet
+				//System.out.println("b");
+				playerBlack.promptMove(this);
+				turnCount++;
+				display.repaint();
+				//System.out.println("w");
+				playerWhite.promptMove(this);
+				turnCount++;
+				display.repaint();
+			}
 			board.calculateScores(playerBlack, playerWhite);
 			System.out.println("B:"+playerBlack.score+" W:"+playerWhite.score);
-			//System.out.println("w");
-			playerWhite.promptMove(this);
-			turnCount++;
-			display.repaint();
-			board.calculateScores(playerBlack, playerWhite);
-			System.out.println("B:"+playerBlack.score+" W:"+playerWhite.score);
+			if(playerBlack.score>playerWhite.score){
+				blackWins++;
+			}else if(playerWhite.score>playerBlack.score){
+				whiteWins++;
+			}
+			numGames++;
+			newGame();
 		}
+		System.out.println("Black:" + blackWins/numGames*100+"% ("+blackWins+"/"+numGames+")");
+		System.out.println("White:" + whiteWins/numGames*100+"% ("+whiteWins+"/"+numGames+")");
+	}
+	
+	public void newGame(){
+		board = new Board();
+		display.setBoard(board);
+		turnCount=1;
 	}
 }

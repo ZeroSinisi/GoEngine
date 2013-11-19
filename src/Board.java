@@ -1,26 +1,24 @@
 import java.util.*;
 
 public class Board {
-	public final class Coord {
-		int row;
-		int col;
-
-		public Coord(int r, int c) {
-			row = r;
-			col = c;
-		}
-	}
-
-	Intersection board[][];
+	boolean pass;
+	boolean gameOver;
+	
+	private Intersection board[][];
+	public Intersection.Piece territory[][];
 
 	public Board() {
 		board = new Intersection[9][9];
+		territory = new Intersection.Piece[9][9];
 		for (int i = 0; i < 9; i++) {
 			for (int j = 0; j < 9; j++) {
 
 				board[i][j] = new Intersection();
+				territory[i][j]=Intersection.Piece.EMPTY;
 			}
 		}
+		pass=false;
+		gameOver=false;
 	}
 
 	private void setSpace(int r, int c, Intersection.Piece p) {
@@ -32,11 +30,20 @@ public class Board {
 		if (checkValid(r, c, p) == true) {
 			setSpace(r, c, p);
 			checkRemoval(r, c);
+			pass=false;
 			return true;
 		} else
 			return false;
 	}
-
+	
+	public void passTurn(){
+		if(pass==true){
+			gameOver=true;
+		}else{
+			pass=true;
+		}
+	}
+	
 	public boolean checkValid(int r, int c, Intersection.Piece p) {
 		if(r<0||r>=9||c<0||c>=9){
 			return false;
@@ -207,8 +214,66 @@ public class Board {
 			
 		}
 	}
-
+	public void calculateTerritory(){
+		boolean checked[][]=new boolean[9][9];
+		for(int r=0;r<9;r++){
+			for(int c=0;c<9;c++){
+				if(checked[r][c]==false){
+					List<Intersection.Piece> colors = new ArrayList<Intersection.Piece>();
+					List<Coord> area = new ArrayList<Coord>();
+					territoryFill(r, c, colors, checked, area);
+					if(colors.size()>0){
+						Intersection.Piece scoreColor = colors.get(0);
+						for(int k=0; k<colors.size();k++){
+							if(colors.get(k)!=scoreColor){
+								scoreColor = Intersection.Piece.EMPTY;
+								break;
+							}
+						}
+						if(scoreColor==Intersection.Piece.BLACK){
+							for (Coord areaMember : area) {
+								territory[areaMember.row][areaMember.col]=Intersection.Piece.BLACK;
+							}
+						}
+						else if(scoreColor==Intersection.Piece.WHITE){
+							for (Coord areaMember : area) {
+								territory[areaMember.row][areaMember.col]=Intersection.Piece.WHITE;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	public void territoryFill(int r, int c, List<Intersection.Piece> colors, boolean checked[][], List<Coord> area){
+		if (r < 0 || c < 0 || r >= 9 || c >= 9) {
+			return;
+		}
+		if(checked[r][c]==true){
+			return;
+		}
+		else if(board[r][c].getContents()!=Intersection.Piece.EMPTY){
+			colors.add(board[r][c].getContents());
+			return;
+		}
+		else{
+			checked[r][c]=true;
+			area.add(new Coord(r,c));
+			territoryFill(r-1, c, colors, checked, area);
+			territoryFill(r, c+1, colors, checked, area);
+			territoryFill(r+1, c, colors, checked, area);
+			territoryFill(r, c-1, colors, checked, area);
+			return;
+			
+		}
+	}
+	
 	public Intersection.Piece getContents(int r, int c) {
 		return board[r][c].getContents();
+	}
+	
+	public Intersection.Piece getTerritory(int r, int c){
+		return territory[r][c];
 	}
 }
