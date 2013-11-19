@@ -1,7 +1,7 @@
 import java.util.*;
 
 public class Board {
-	final class Coord {
+	public final class Coord {
 		int row;
 		int col;
 
@@ -38,6 +38,9 @@ public class Board {
 	}
 
 	public boolean checkValid(int r, int c, Intersection.Piece p) {
+		if(r<0||r>=9||c<0||c>=9){
+			return false;
+		}
 		boolean valid = false;
 		boolean checked[][] = new boolean[9][9];
 		Intersection tempBoard[][] = new Intersection[9][9];
@@ -155,24 +158,28 @@ public class Board {
 	}
 
 	public void calculateScores(Player pB, Player pW) {
+		pB.score=0;
+		pW.score=0;
 		boolean checked[][] = new boolean[9][9];
 		for(int i=0; i<9; i++){
 			for (int j=0; j<9; j++){
 				if(checked[i][j]==false){
 					List<Intersection.Piece> colors = new ArrayList<Intersection.Piece>();
 					int score = scoreFill(i, j, colors, checked, 0);
-					Intersection.Piece scoreColor = colors.get(0);
-					for(int k=0; k<colors.size();k++){
-						if(colors.get(k)!=scoreColor){
-							scoreColor = Intersection.Piece.EMPTY;
-							break;
+					if(colors.size()>0){
+						Intersection.Piece scoreColor = colors.get(0);
+						for(int k=0; k<colors.size();k++){
+							if(colors.get(k)!=scoreColor){
+								scoreColor = Intersection.Piece.EMPTY;
+								break;
+							}
 						}
-					}
-					if(scoreColor==Intersection.Piece.BLACK){
-						pB.score += score;
-					}
-					else if(scoreColor==Intersection.Piece.WHITE){
-						pW.score += score;
+						if(scoreColor==Intersection.Piece.BLACK){
+							pB.score += score;
+						}
+						else if(scoreColor==Intersection.Piece.WHITE){
+							pW.score += score;
+						}
 					}
 				}
 			}
@@ -180,6 +187,9 @@ public class Board {
 	}
 	
 	public int scoreFill(int r, int c, List<Intersection.Piece> colors, boolean checked[][], int score){
+		if (r < 0 || c < 0 || r >= 9 || c >= 9) {
+			return 0;
+		}
 		if(checked[r][c]==true){
 			return 0;
 		}
@@ -188,6 +198,7 @@ public class Board {
 			return 0;
 		}
 		else{
+			checked[r][c]=true;
 			score+= scoreFill(r-1, c, colors, checked, score);
 			score+= scoreFill(r, c+1, colors, checked, score);
 			score+= scoreFill(r+1, c, colors, checked, score);

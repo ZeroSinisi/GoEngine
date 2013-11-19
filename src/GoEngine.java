@@ -20,8 +20,8 @@ public class GoEngine {
 	}
 
 	public GoEngine() {
-		playerBlack = new Player("Black", Intersection.Piece.BLACK);
-		playerWhite = new ComputerPlayer("White", Intersection.Piece.WHITE);
+		playerBlack = new RandomAI("Black", Intersection.Piece.BLACK);
+		playerWhite = new TerritoryDenialAI("White", Intersection.Piece.WHITE);
 		board = new Board();
 		display = new DisplayArea();
 		display.setBoard(board);
@@ -42,12 +42,16 @@ public class GoEngine {
 	public void playGo() {
 		while (true) { // TODO This will need termination eventually, but
 						// players can't pass yet
+			//System.out.println("b");
 			playerBlack.promptMove(this);
 			turnCount++;
 			display.repaint();
+			//System.out.println("w");
 			playerWhite.promptMove(this);
 			turnCount++;
 			display.repaint();
+			board.calculateScores(playerBlack, playerWhite);
+			System.out.println("B:"+playerBlack.score+" W:"+playerWhite.score);
 		}
 	}
 }

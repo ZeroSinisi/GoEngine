@@ -1,6 +1,6 @@
-public class ComputerPlayer extends Player {
+public class TerritoryDenialAI extends Player {
 
-	public ComputerPlayer(String n, Intersection.Piece p) {
+	public TerritoryDenialAI(String n, Intersection.Piece p) {
 		super(n, p);
 		// TODO Auto-generated constructor stub
 	}
