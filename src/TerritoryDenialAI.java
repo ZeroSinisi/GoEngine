@@ -40,7 +40,7 @@ public class TerritoryDenialAI extends Player {
 						}
 					}
 					for(int j = col - 1; j >= 0; j--){
-						if(g.board.getContents(j, col) == Intersection.Piece.EMPTY) {
+						if(g.board.getContents(row, j) == Intersection.Piece.EMPTY) {
 							leftSpace++;
 						} else {
 							break;

@@ -46,6 +46,8 @@ public class GoEngine {
 			playerBlack.promptMove(this);
 			turnCount++;
 			display.repaint();
+			board.calculateScores(playerBlack, playerWhite);
+			System.out.println("B:"+playerBlack.score+" W:"+playerWhite.score);
 			//System.out.println("w");
 			playerWhite.promptMove(this);
 			turnCount++;
