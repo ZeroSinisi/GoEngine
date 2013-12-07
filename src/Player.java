@@ -30,5 +30,11 @@ public class Player {
 			}
 		}
 	}
+	
+	public String getInfo(){
+		String output="";
+		output+="Player";
+		return output;
+	}
 
 }

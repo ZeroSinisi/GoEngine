@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.awt.AlphaComposite;
 //import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -17,6 +18,7 @@ public class DisplayArea extends JPanel {
 	private float[] dash1 = { 2f, 0f, 2f };
 	private BasicStroke bs = new BasicStroke(2, BasicStroke.CAP_SQUARE,
 			BasicStroke.JOIN_BEVEL, 5.0f, dash1, 5f);
+	public boolean displayTerritory;
 
 	// Draw the board
 	private void render(Graphics g) {
@@ -38,15 +40,28 @@ public class DisplayArea extends JPanel {
 	}
 
 	private void drawPieces(Graphics2D g2d) {
+		drawBoard.calculateTerritory();
 		for (int i = 0; i < 9; i++) {
 			for (int j = 0; j < 9; j++) {
-				if (drawBoard.getContents(i, j) == Intersection.Piece.EMPTY) {
-					continue;
-				} else if (drawBoard.getContents(i, j) == Intersection.Piece.BLACK)
-					g2d.setColor(Color.black);
-				else
-					g2d.setColor(Color.white);
-				g2d.fillOval(40 * j + 50, 40 * i + 50, 26, 26);
+				g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+				if (drawBoard.getContents(i, j) != Intersection.Piece.EMPTY) {
+					if (drawBoard.getContents(i, j) == Intersection.Piece.BLACK)
+						g2d.setColor(Color.black);
+					else
+						g2d.setColor(Color.white);
+					g2d.fillOval(40 * j + 50, 40 * i + 50, 26, 26);
+				}
+				if(displayTerritory){
+					if (drawBoard.getTerritory(i, j) == Intersection.Piece.EMPTY) {
+						continue;
+					} else if (drawBoard.getTerritory(i, j) == Intersection.Piece.BLACK)
+						g2d.setColor(Color.black);
+					else
+						g2d.setColor(Color.white);
+					g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.2f));
+					g2d.fillOval(40 * j + 50, 40 * i + 50, 26, 26);
+				}
+				
 			}
 		}
 	}

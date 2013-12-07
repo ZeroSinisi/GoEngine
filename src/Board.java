@@ -28,6 +28,54 @@ public class Board {
 		pass=false;
 		gameOver=false;
 	}
+	
+	public Board(Board b){
+		pass = b.pass;
+		gameOver = b.gameOver;
+		
+		board = new Intersection[9][9];
+		for(int r=0;r<9;r++){
+			for(int c=0;c<9;c++){
+				board[r][c]=b.board[r][c];
+			}
+		}
+		territory = new Intersection.Piece[9][9];
+		
+		history = new ArrayList<Intersection[][]>();
+		for(int i=0;i<b.history.size();i++){
+			history.add(b.history.get(i));
+		}
+	}
+	
+	public void CopyBoard(Board b){
+		pass = b.pass;
+		gameOver = b.gameOver;
+		
+		for(int r=0;r<9;r++){
+			for(int c=0;c<9;c++){
+				board[r][c]=new Intersection(b.board[r][c].getContents());
+			}
+		}
+		
+		history.clear();
+		for(int i=0;i<b.history.size();i++){
+			history.add(b.history.get(i));
+		}
+	}
+	
+	
+	public void reset(){
+		for (int i = 0; i < 9; i++) {
+			for (int j = 0; j < 9; j++) {
+
+				board[i][j].setContents(Intersection.Piece.EMPTY);
+				territory[i][j]=Intersection.Piece.EMPTY;
+			}
+		}
+		history.clear();
+		pass=false;
+		gameOver=false;
+	}
 
 	private void setSpace(int r, int c, Intersection.Piece p) {
 		board[r][c].setContents(p);
@@ -235,6 +283,36 @@ public class Board {
 		}
 	}
 	
+	public ScorePair calculateScores() {
+		int bScore=0;
+		int wScore=0;
+		boolean checked[][] = new boolean[9][9];
+		for(int i=0; i<9; i++){
+			for (int j=0; j<9; j++){
+				if(checked[i][j]==false){
+					List<Intersection.Piece> colors = new ArrayList<Intersection.Piece>();
+					int score = scoreFill(i, j, colors, checked, 0);
+					if(colors.size()>0){
+						Intersection.Piece scoreColor = colors.get(0);
+						for(int k=0; k<colors.size();k++){
+							if(colors.get(k)!=scoreColor){
+								scoreColor = Intersection.Piece.EMPTY;
+								break;
+							}
+						}
+						if(scoreColor==Intersection.Piece.BLACK){
+							bScore += score;
+						}
+						else if(scoreColor==Intersection.Piece.WHITE){
+							wScore += score;
+						}
+					}
+				}
+			}
+		}
+		return new ScorePair(bScore, wScore);
+	}
+	
 	public int scoreFill(int r, int c, List<Intersection.Piece> colors, boolean checked[][], int score){
 		if (r < 0 || c < 0 || r >= 9 || c >= 9) {
 			return 0;
@@ -260,6 +338,9 @@ public class Board {
 		boolean checked[][]=new boolean[9][9];
 		for(int r=0;r<9;r++){
 			for(int c=0;c<9;c++){
+				if(board[r][c].getContents()!=Intersection.Piece.EMPTY){
+					territory[r][c]=board[r][c].getContents();
+				}
 				if(checked[r][c]==false){
 					List<Intersection.Piece> colors = new ArrayList<Intersection.Piece>();
 					List<Coord> area = new ArrayList<Coord>();
@@ -280,6 +361,10 @@ public class Board {
 						else if(scoreColor==Intersection.Piece.WHITE){
 							for (Coord areaMember : area) {
 								territory[areaMember.row][areaMember.col]=Intersection.Piece.WHITE;
+							}
+						}else{
+							for(Coord areaMember : area){
+								territory[areaMember.row][areaMember.col]=Intersection.Piece.EMPTY;
 							}
 						}
 					}

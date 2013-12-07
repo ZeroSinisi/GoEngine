@@ -27,4 +27,10 @@ public class RandomAI extends Player {
 			g.board.passTurn();
 		}
 	}
+	
+	public String getInfo(){
+		String output = "";
+		output+="Random";
+		return output;
+	}
 }

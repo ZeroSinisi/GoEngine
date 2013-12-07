@@ -128,6 +128,12 @@ public class TerritoryDenialAI extends Player {
 		return count;
 	}
 	
+	public String getInfo(){
+		String output = "";
+		output+="Territory Denial";
+		return output;
+	}
+	
 	/*
 	public void promptMove(GoEngine g) {
 		
