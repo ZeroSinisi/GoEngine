@@ -14,6 +14,7 @@ public class GoEngine {
 	public boolean displayMode;
 	public int turnTime;
 	public int gameTime;
+	private DataManager manager;
 	
 
 	public Scanner in = new Scanner(System.in);
@@ -33,8 +34,8 @@ public class GoEngine {
 		board = new Board();
 		display = new DisplayArea();
 		display.setBoard(board);
+		manager = new DataManager();
 		chooseSettings();
-
 	}
 	
 	public void chooseSettings(){	
@@ -48,8 +49,9 @@ public class GoEngine {
 		System.out.println("2. Territory Denial AI");
 		System.out.println("3. Score Maximizing Minimax");
 		System.out.println("4. Human Player");
-		System.out.print("Select AI for player Black (1-4): ");
-		switch(getInt(1,4)){
+		System.out.println("5. Knowledge-Base");
+		System.out.print("Select AI for player Black (1-5): ");
+		switch(getInt(1,5)){
 		case 1:
 			playerBlack = new RandomAI("Black", Intersection.Piece.BLACK);
 			break;
@@ -63,6 +65,9 @@ public class GoEngine {
 		case 4:
 			playerBlack= new Player("Black", Intersection.Piece.BLACK);
 			break;
+		case 5:
+			playerBlack = new KnowledgeBaseAI("Black", Intersection.Piece.BLACK, manager);
+			break;
 		}
 	}
 	
@@ -71,8 +76,9 @@ public class GoEngine {
 		System.out.println("2. Territory Denial AI");
 		System.out.println("3. Score Maximizing Minimax");
 		System.out.println("4. Human Player");
-		System.out.print("Select AI for player White (1-4): ");
-		switch(getInt(1,4)){
+		System.out.println("5. Knowledge-Base");
+		System.out.print("Select AI for player White (1-5): ");
+		switch(getInt(1,5)){
 		case 1:
 			playerWhite = new RandomAI("White", Intersection.Piece.WHITE);
 			break;
@@ -85,6 +91,9 @@ public class GoEngine {
 			break;
 		case 4:
 			playerWhite= new Player("White", Intersection.Piece.WHITE);
+			break;
+		case 5:
+			playerBlack = new KnowledgeBaseAI("White", Intersection.Piece.WHITE, manager);
 			break;
 		}
 	}
@@ -183,17 +192,21 @@ public class GoEngine {
 				
 					
 			}
+			manager.recordGame(board);
 			//display.repaint();
 			board.calculateScores(playerBlack, playerWhite);
 			//System.out.println("B:"+playerBlack.score+" W:"+playerWhite.score);
 			if(playerBlack.score>playerWhite.score){
 				blackWins++;
+				manager.recordWinner(2);
 				System.out.println("B ("+(int)((double)numGames/numTrials*100)+"%)");
 			}else if(playerWhite.score>playerBlack.score){
 				whiteWins++;
+				manager.recordWinner(1);
 				System.out.println("W ("+(int)((double)numGames/numTrials*100)+"%)");
 			}else if(playerWhite.score==playerBlack.score){
 				draws++;
+				manager.recordWinner(0);
 				System.out.println("Draw");
 			}
 			if(displayMode){
@@ -234,6 +247,7 @@ public class GoEngine {
 			}
 			break;
 		case 2:
+			manager.closeWriter();
 			System.exit(0);
 			break;
 		}

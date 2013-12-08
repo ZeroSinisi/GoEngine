@@ -20,4 +20,5 @@ public class Intersection {
 	public void setContents(Piece p) {
 		contents = p;
 	}
+	
 }
